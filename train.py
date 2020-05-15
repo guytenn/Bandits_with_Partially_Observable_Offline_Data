@@ -1,6 +1,7 @@
 import numpy as np
 from SquareLinCBLC import SquareLinCBLC
 from utils import calc_gamma
+from time import time
 
 
 class Job:
@@ -21,6 +22,7 @@ class Job:
             self.B = np.max([self.B, self.S * np.linalg.norm(self.b[a])])
 
     def execute(self, T : int):
+        start = time.time()
         print(f'Started Job: (T={T}, L={self.L})')
         args = self.args
         regret = 0
@@ -34,6 +36,6 @@ class Job:
             real_r, r = self.env.sample_r(x, a)
             Algo.update(x, a, r)
             regret += self.env.best_r(x) - real_r
-        print(f'Done: (T={T}, L={self.L}, regret={regret})')
+        print(f'Done: (T={T}, L={self.L}, regret={regret}, time={time.time()-start}s)')
         return regret
 
