@@ -25,6 +25,7 @@ def main(args):
     n_jobs = min(len(T_vals), args['max_jobs'])
     regret = []
     for L in args['L_values']:
+        print(f'Starting {n_jobs} jobs for L={L}')
         job = Job(env=env, M=M_global, L=L, w=w, **args)
         regret.append(Parallel(n_jobs=n_jobs)(delayed(job.execute)(t) for t in T_vals))
     regret = np.array(regret)
