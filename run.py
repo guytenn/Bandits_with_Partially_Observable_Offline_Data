@@ -22,7 +22,7 @@ def main(args):
     # M_global = np.repeat(np.eye(d)[np.newaxis, :, :], K, axis=0)
 
     T_vals = np.logspace(1, args['N'], args['n_vals']).astype(int)
-    n_jobs = min(len(T_vals), args['max_jobs'])
+    n_jobs = min(2*len(T_vals), args['max_jobs'])
     regret = []
     for L in args['L_values']:
         print(f'Starting {n_jobs} jobs for L={L}')
