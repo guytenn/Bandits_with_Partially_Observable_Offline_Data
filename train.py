@@ -36,6 +36,7 @@ class Job:
             real_r, r = self.env.sample_r(x, a)
             Algo.update(x, a, r)
             regret += self.env.best_r(x) - real_r
-        print(f'Done: (T={T}, L={self.L}, regret={regret}, time={time.time()-start}s)')
+        elapsed_time = time.time()-start
+        print(f'Done: (T={T}, L={self.L}, regret={regret}, time={elapsed_time}s, time_per_100_iter={100 * elapsed_time / T}s)')
         return regret
 
