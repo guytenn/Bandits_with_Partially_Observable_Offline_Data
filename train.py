@@ -21,6 +21,7 @@ class Job:
             self.B = np.max([self.B, self.S * np.linalg.norm(self.b[a])])
 
     def execute(self, T : int):
+        print(f'Started Job: (T={T}, L={self.L}')
         args = self.args
         regret = 0
         gamma = calc_gamma(T, 1, self.B, args['K'], args['l'], args['d'], self.L, self.S, args['delta'])
@@ -33,6 +34,6 @@ class Job:
             real_r, r = self.env.sample_r(x, a)
             Algo.update(x, a, r)
             regret += self.env.best_r(x) - real_r
-        print(f'Done (T={T}, L={self.L}, regret={regret})')
+        print(f'Done: (T={T}, L={self.L}, regret={regret})')
         return regret
 
