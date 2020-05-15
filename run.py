@@ -33,7 +33,8 @@ def main(args):
     # ax.fill_between(t_vals, mean-std/2, mean+std/2, facecolor=colors[ll], alpha=0.1)
     plt.title(f'Regret, d={d}')
     plt.legend([f'L={L}' for L in args['L_values']])
-    plt.show()
+    plt.savefig('regret.png')
+    np.save('regret.npy', regret)
 
 
 if __name__ == '__main__':
