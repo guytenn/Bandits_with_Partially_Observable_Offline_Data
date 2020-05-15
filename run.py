@@ -1,10 +1,12 @@
 from env import LinearContextualBandit
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import argparse
 from train import Job
 from joblib import Parallel, delayed
 
+matplotlib.use('Agg')
 
 def main(args):
     d = args['d']
