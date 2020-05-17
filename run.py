@@ -63,7 +63,7 @@ if __name__ == '__main__':
     parser.add_argument("--N", default=2, type=int)
     parser.add_argument("--d", default=20, type=int)
     parser.add_argument("--K", default=5, type=int)
-    parser.add_argument("--l", default=1, type=int)
+    parser.add_argument("--l", default=1, type=float)
     parser.add_argument("--n_seeds", default=5, type=int)
     parser.add_argument("--delta", default=0.001, type=float)
     parser.add_argument('--L_values', nargs='+', default=[0], type=int)
