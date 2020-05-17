@@ -5,8 +5,9 @@ import matplotlib.pyplot as plt
 import argparse
 from train import Job
 from joblib import Parallel, delayed
+from itertools import product
 
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 
 def main(args):
     d = args['d']
@@ -17,27 +18,42 @@ def main(args):
     # w[0] = 1
     # w = np.diag(w)
 
-    env = LinearContextualBandit(w)
+    env = LinearContextualBandit(w, args['noise'])
     M_global = np.random.rand(K, d, d) / np.sqrt(d)
     # M_global = np.repeat(np.eye(d)[np.newaxis, :, :], K, axis=0)
 
     T_vals = np.logspace(1, args['N'], args['n_vals']).astype(int)
-    n_jobs = min(2*len(T_vals), args['max_jobs'])
-    regret = []
-    for L in args['L_values']:
-        print(f'Starting {n_jobs} jobs for L={L}')
-        job = Job(env=env, M=M_global, L=L, w=w, **args)
-        regret.append(Parallel(n_jobs=n_jobs)(delayed(job.execute)(t) for t in T_vals))
-    regret = np.array(regret)
+
+    n_jobs = min(len(args['L_values']) * len(args['gamma_values']), args['max_jobs'])
+    regret_tmp = []
+    for t in T_vals:
+        print(f'Starting {n_jobs} jobs for t={t}')
+        job = Job(env=env, M=M_global, w=w, **args)
+        regret_tmp.append(Parallel(n_jobs=n_jobs)(delayed(job.execute)(t, L, gamma)
+                                              for L, gamma in product(args['L_values'], args['gamma_values'])))
+
+    regret = np.zeros((len(T_vals), len(args['L_values']), len(args['gamma_values'])))
+    for tt in range(len(T_vals)):
+        i = 0
+        for ll, gg in product(range(len(args['L_values'])), range(len(args['gamma_values']))):
+            regret[tt, ll, gg] = regret_tmp[tt][i]
+            i += 1
+
+    best_regret = np.zeros((len(T_vals), len(args['L_values'])))
+    for ll in range(len(args['L_values'])):
+        best_regret[:, ll] = regret[:, ll, np.argmin(regret[-1, ll, :])]
 
     fig, ax = plt.subplots(1)
-    x_axis = np.repeat(T_vals[np.newaxis, :], len(regret), axis=0)
-    ax.plot(x_axis.T, regret.T)
+    x_axis = np.repeat(T_vals[np.newaxis, :], best_regret.shape[1], axis=0)
+    ax.plot(x_axis.T, best_regret)
     # ax.fill_between(t_vals, mean-std/2, mean+std/2, facecolor=colors[ll], alpha=0.1)
     plt.title(f'Regret, d={d}')
     plt.legend([f'L={L}' for L in args['L_values']])
+    # plt.show()
     plt.savefig('regret.png')
-    np.save('regret.npy', regret)
+
+    save_data = {'data': regret, 'args': args}
+    np.save('data.npy', save_data)
 
 
 if __name__ == '__main__':
@@ -49,8 +65,10 @@ if __name__ == '__main__':
     parser.add_argument("--l", default=1, type=int)
     parser.add_argument("--n_seeds", default=5, type=int)
     parser.add_argument("--delta", default=0.001, type=float)
-    parser.add_argument('--L_values', '--list', nargs='+', default=[0], type=int)
+    parser.add_argument('--L_values', nargs='+', default=[0], type=int)
+    parser.add_argument('--gamma_values', nargs='+', default=[0.2, 0.4, 0.6, 0.8, 1, 2, 5, 10], type=float)
     parser.add_argument('--max_jobs', default=20, type=int)
+    parser.add_argument('--noise', dest='noise', choices=['uniform', 'bernoulli'], default='uniform')
     # parser.add_argument("--boolean", action="store_true")
     args = parser.parse_args().__dict__
 

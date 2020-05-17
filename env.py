@@ -3,10 +3,11 @@ import numpy as np
 
 class LinearContextualBandit:
 
-    def __init__(self, w):
+    def __init__(self, w, noise):
         self.K = w.shape[0]
         self.d = w.shape[1]
         self.w = w
+        self.noise = noise
 
     def sample_x(self):
         # x = np.abs(np.random.randn(self.d))
@@ -25,10 +26,14 @@ class LinearContextualBandit:
     def sample_r(self, x, a):
         real_r = x @ self.w[a]
         const = np.min([np.abs(1 - real_r), real_r])
-        if (np.random.rand() > 0.5):
-            noisy_r = real_r + const
+        if self.noise == 'uniform':
+            noisy_r = real_r + 2 * const * (np.random.rand() - 0.5)
+        elif self.noise == 'bernoulli':
+            if (np.random.rand() > 0.5):
+                noisy_r = real_r + const
+            else:
+                noisy_r = real_r - const
         else:
-            noisy_r = real_r - const
+            raise ValueError(f'Unknown noise type: {self.noise}')
 
-        # noisy_r = real_r + const * (np.random.rand() - 0.5)
         return real_r, noisy_r
