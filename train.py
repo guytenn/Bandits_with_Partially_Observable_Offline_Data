@@ -27,8 +27,8 @@ class Job:
 
         args = self.args
         regret = 0
-        # gamma = calc_gamma(T, 1, self.B, args['K'], args['l'], args['d'], L, self.S, args['delta'])
-        gamma = gamma_factor * np.sqrt(T)
+        gamma = gamma_factor * calc_gamma(T, 1, B, args['K'], args['l'], args['d'], L, self.S, args['delta'])
+        # gamma = gamma_factor * np.sqrt(T)
         Algo = SquareLinCBLC(args['d'], args['K'], gamma, self.mu, args['l'])
         for _ in range(T):
             x = self.env.sample_x()
