@@ -75,7 +75,7 @@ if __name__ == '__main__':
     parser.add_argument("--l", default=1, type=float)
     parser.add_argument("--n_seeds", default=5, type=int)
     parser.add_argument("--delta", default=0.001, type=float)
-    parser.add_argument('--L_values', nargs='+', default=[0], type=int)
+    parser.add_argument('--L_values', nargs='+', default=[2], type=int)
     parser.add_argument('--gamma_values', nargs='+', default=[0.2, 0.5, 1, 1.5, 5, 10], type=float)
     parser.add_argument('--max_jobs', default=20, type=int)
     parser.add_argument('--noise', dest='noise', choices=['uniform', 'bernoulli'], default='uniform')

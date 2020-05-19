@@ -114,11 +114,11 @@ class MbSampler:
         self.R12[a].step(x[:self.L], x[self.L:])
         for i in range(self.K):
             if self.R12[i].t == 0:
-                B = np.zeros((self.d - self.L, self.L))
+                B = np.zeros((self.L, self.d - self.L))
             else:
                 B = self.R11_inv_vec[i] @ self.R12[i].value
-            self.M[i] = np.concatenate([np.eye(self.L), B]).T
-        return self.M, self.b
+            self.M[i] = np.concatenate([np.eye(self.L), B.T]).T
+        return np.array(self.M), np.array(self.b)
 
 
 if __name__ == '__main__':

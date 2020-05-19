@@ -34,7 +34,7 @@ class Trainer:
             sampler = None
         else:
             sampler = MbSampler(data_manager, L, self.d, self.K)
-            b = sampler.b
+            b = np.array(sampler.b)
             B = np.max(np.linalg.norm(b, axis=1))
             M = None
 
