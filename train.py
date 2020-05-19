@@ -35,7 +35,7 @@ class Trainer:
         else:
             sampler = MbSampler(data_manager, L, self.d, self.K)
             b = np.array(sampler.b)
-            B = np.max(np.linalg.norm(b, axis=1))
+            B = self.S * np.max(np.linalg.norm(b, axis=1))
             M = None
 
         args = self.args
@@ -45,8 +45,10 @@ class Trainer:
         Algo = SquareLinCBLC(self.d, self.K, gamma, self.mu, args['l'])
         for _ in range(T):
             x = self.env.sample_x()
+            t1 = time()
             if self.args['perturbations']:
                 M, _ = sampler.step(x)
+            print(time( )- t1)
             y_hat = Algo.step(x, M, b)
             p = Algo.calc_p(y_hat)
             a = np.random.choice(range(self.K), p=p)
