@@ -3,9 +3,12 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import argparse
-from train import Job
+from train import Trainer
 from joblib import Parallel, delayed
 from itertools import product
+import os
+import datetime
+from data import DataManager
 
 matplotlib.use('Agg')
 
@@ -19,8 +22,14 @@ def main(args):
     # w = np.diag(w)
 
     env = LinearContextualBandit(w, args['noise'])
-    M_global = np.random.rand(K, d, d) / np.sqrt(d)
-    # M_global = np.repeat(np.eye(d)[np.newaxis, :, :], K, axis=0)
+
+    if args['perturbations']:
+        print(f'Creating Dataset of size N={args["data_size"]}')
+        data_manager = DataManager(env, d, K, args['data_size'])
+    else:
+        data_manager = None
+
+    trainer = Trainer(env=env, w=w, **args)
 
     T_vals = np.logspace(1, args['N'], args['n_vals']).astype(int)
 
@@ -28,9 +37,12 @@ def main(args):
     regret_tmp = []
     for t in T_vals:
         print(f'Starting {n_jobs} jobs for t={t}')
-        job = Job(env=env, M=M_global, w=w, **args)
-        regret_tmp.append(Parallel(n_jobs=n_jobs)(delayed(job.execute)(t, L, gamma)
+        regret_tmp.append(Parallel(n_jobs=n_jobs)(delayed(trainer.execute)(t, L, gamma, data_manager=data_manager)
                                                   for L, gamma in product(args['L_values'], args['gamma_values'])))
+
+    # Gather results and plot
+    folder_name = datetime.datetime.now().__str__()
+    os.mkdir(folder_name)
 
     regret = np.zeros((len(T_vals), len(args['L_values']), len(args['gamma_values'])))
     for tt in range(len(T_vals)):
@@ -38,10 +50,6 @@ def main(args):
         for ll, gg in product(range(len(args['L_values'])), range(len(args['gamma_values']))):
             regret[tt, ll, gg] = regret_tmp[tt][i]
             i += 1
-
-    # best_regret = np.zeros((len(T_vals), len(args['L_values'])))
-    # for ll in range(len(args['L_values'])):
-    #     best_regret[:, ll] = regret[:, ll, np.argmin(regret[-1, ll, :])]
 
     for gg, gamma in enumerate(args['gamma_values']):
         fig, ax = plt.subplots(1)
@@ -51,10 +59,10 @@ def main(args):
         plt.title(f'Regret, d={d}, gamma={gamma}')
         plt.legend([f'L={L}' for L in args['L_values']])
         # plt.show()
-        plt.savefig(f'regret_gamma_{gamma}.png')
+        plt.savefig(f'{folder_name}/regret_gamma_{gamma}.png')
 
     save_data = {'data': regret, 'args': args}
-    np.save('data.npy', save_data)
+    np.save(f'{folder_name}/data.npy', save_data)
 
 
 if __name__ == '__main__':
@@ -70,7 +78,8 @@ if __name__ == '__main__':
     parser.add_argument('--gamma_values', nargs='+', default=[0.2, 0.5, 1, 1.5, 5, 10], type=float)
     parser.add_argument('--max_jobs', default=20, type=int)
     parser.add_argument('--noise', dest='noise', choices=['uniform', 'bernoulli'], default='uniform')
-    # parser.add_argument("--boolean", action="store_true")
+    parser.add_argument("--perturbations", action="store_true")
+    parser.add_argument('--data_size', default=100000, type=int)
     args = parser.parse_args().__dict__
 
     main(args)

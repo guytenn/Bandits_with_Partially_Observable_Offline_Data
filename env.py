@@ -3,7 +3,7 @@ import numpy as np
 
 class LinearContextualBandit:
 
-    def __init__(self, w, noise):
+    def __init__(self, w, noise='uniform'):
         self.K = w.shape[0]
         self.d = w.shape[1]
         self.w = w
