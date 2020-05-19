@@ -80,7 +80,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_jobs', default=20, type=int)
     parser.add_argument('--noise', dest='noise', choices=['uniform', 'bernoulli'], default='uniform')
     parser.add_argument("--perturbations", action="store_true")
-    parser.add_argument('--data_size', default=100000, type=int)
+    parser.add_argument('--data_size', default=10000, type=int)
     args = parser.parse_args().__dict__
 
     main(args)
