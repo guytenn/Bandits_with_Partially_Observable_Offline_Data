@@ -68,7 +68,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-- ", default=20, type=int)
+    parser.add_argument("--n_vals", default=20, type=int)
     parser.add_argument("--N", default=2, type=int)
     parser.add_argument("--d", default=20, type=int)
     parser.add_argument("--K", default=5, type=int)
