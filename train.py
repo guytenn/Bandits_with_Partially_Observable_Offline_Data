@@ -45,10 +45,8 @@ class Trainer:
         Algo = SquareLinCBLC(self.d, self.K, gamma, self.mu, args['l'])
         for _ in range(T):
             x = self.env.sample_x()
-            t1 = time()
             if self.args['perturbations']:
                 M, _ = sampler.step(x)
-            print(time( )- t1)
             y_hat = Algo.step(x, M, b)
             p = Algo.calc_p(y_hat)
             a = np.random.choice(range(self.K), p=p)
