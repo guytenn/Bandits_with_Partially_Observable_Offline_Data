@@ -117,18 +117,15 @@ class MbSampler:
                 B = np.zeros((self.L, self.d - self.L))
             else:
                 B = self.R11_inv_vec[i] @ self.R12[i].value
-                # R12 = np.pad(self.R12[i].value, [(0, self.L), (self.d - self.L, 0)])
-                # B = self.R11_inv_vec[i] @ R12
             self.M[i] = np.concatenate([np.eye(self.L), B]).T
-            # self.M[i] = self.D + B
         return self.M, self.b
 
 
 if __name__ == '__main__':
     from env import LinearContextualBandit
 
-    L = 2
-    d = 4
+    L = 0
+    d = 30
     K = 2
     N = 10000
 
@@ -136,7 +133,9 @@ if __name__ == '__main__':
 
     env = LinearContextualBandit(w)
 
-    sampler = MbSampler(env, L, d, K, N)
+    data_manager = DataManager(env, d, K, N)
+
+    sampler = MbSampler(data_manager, L, d, K)
 
     for _ in range(N):
         M, b = sampler.step(env.sample_x())

@@ -12,6 +12,7 @@ from data import DataManager
 
 matplotlib.use('Agg')
 
+
 def main(args):
     d = args['d']
     K = args['K']
