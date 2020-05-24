@@ -14,13 +14,13 @@ matplotlib.use('Agg')
 
 
 def main(args):
+    if args['seed'] >= 0:
+        np.random.seed(args['seed'])
+
     d = args['d']
     K = args['K']
 
     w = np.abs(np.random.rand(K, d)) / np.sqrt(d)
-    # w = 0.0001*np.ones(d)
-    # w[0] = 1
-    # w = np.diag(w)
 
     env = LinearContextualBandit(w, args['noise'])
 
@@ -75,6 +75,7 @@ if __name__ == '__main__':
     parser.add_argument("--K", default=5, type=int)
     parser.add_argument("--l", default=1, type=float)
     parser.add_argument("--n_seeds", default=3, type=int)
+    parser.add_argument("--seed", default=-1, type=int)
     parser.add_argument("--delta", default=0.001, type=float)
     parser.add_argument('--L_values', nargs='+', default=[2], type=int)
     parser.add_argument('--gamma_values', nargs='+', default=[0.2, 0.5, 1, 1.5, 5, 10], type=float)
@@ -82,6 +83,7 @@ if __name__ == '__main__':
     parser.add_argument('--noise', dest='noise', choices=['uniform', 'bernoulli'], default='uniform')
     parser.add_argument("--perturbations", action="store_true")
     parser.add_argument('--data_size', default=1000, type=int)
+    parser.add_argument('--calc_r12', action="store_true")
     args = parser.parse_args().__dict__
 
     main(args)

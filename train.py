@@ -24,7 +24,9 @@ class Trainer:
         start = time()
         print(f'Started Job: (T={T}, L={L}, gamma={gamma_factor})')
 
-        if not self.args['perturbations']:
+        args = self.args
+
+        if not args['perturbations']:
             M = self.M[:, 0:L, :]
             b = np.zeros((self.K, L))
             B = 0
@@ -33,12 +35,11 @@ class Trainer:
                 B = np.max([B, self.S * np.linalg.norm(b[a])])
             sampler = None
         else:
-            sampler = MbSampler(data_manager, L, self.d, self.K)
+            sampler = MbSampler(data_manager, L, self.d, self.K, args['calc_r12'])
             b = np.array(sampler.b)
             B = self.S * np.max(np.linalg.norm(b, axis=1))
             M = None
 
-        args = self.args
         regret = 0
         gamma = gamma_factor * calc_gamma(T, 1, B, self.K, args['l'], self.d, L, self.S, args['delta'])
         # gamma = gamma_factor * np.sqrt(T)

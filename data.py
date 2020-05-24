@@ -82,41 +82,43 @@ class DataManager:
 
 
 class MbSampler:
-    def __init__(self, data_manager: DataManager, L, d, K):
+    def __init__(self, data_manager: DataManager, L, d, K, calc_r12=False):
         self.data_manager = data_manager
 
         self.L = L
         self.d = d
         self.K = K
+        self.calc_r12 = calc_r12
+
         N = data_manager.N
 
         # For calculating b (R11 is also used for M)
         R11_vec = [R() for _ in range(K)]
+        self.R12_vec = [R() for _ in range(K)]
         Y = [Mu() for _ in range(self.K)]
         for i in range(N):
             R11_vec[data_manager.A[i]].step(data_manager.X[i, :L])
             Y[data_manager.A[i]].step(data_manager.X[i, :L] * data_manager.r[i])
+            if calc_r12:
+                self.R12_vec[data_manager.A[i]].step(data_manager.X[i, :L], data_manager.X[i, L:])
         self.R11_inv_vec = [np.linalg.inv(R11.value) for R11 in R11_vec]
         self.b = [self.R11_inv_vec[i] @ Y[i].value for i in range(K)]
 
         # For calculating M
-        # self.R11_inv_vec = [np.pad(R11_inv, [(0, d - L), (0, d - L)]) for R11_inv in R11_inv_vec]
-        self.R12 = [R() for _ in range(K)]
         self.M = [[] for _ in range(K)]
 
-        # self.￿D = np.pad(np.eye(L), [(0, d-L), (0 , d-L)])
 
     def step(self, x):
         if self.L == 0:
             return np.array([]), self.b
 
         a = self.data_manager.pib(x)
-        self.R12[a].step(x[:self.L], x[self.L:])
+        self.R12_vec[a].step(x[:self.L], x[self.L:])
         for i in range(self.K):
-            if self.R12[i].t == 0:
+            if self.R12_vec[i].t == 0:
                 B = np.zeros((self.L, self.d - self.L))
             else:
-                B = self.R11_inv_vec[i] @ self.R12[i].value
+                B = self.R11_inv_vec[i] @ self.R12_vec[i].value
             self.M[i] = np.concatenate([np.eye(self.L), B.T]).T
         return np.array(self.M), np.array(self.b)
 
