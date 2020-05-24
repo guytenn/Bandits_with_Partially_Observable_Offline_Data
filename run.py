@@ -96,7 +96,7 @@ if __name__ == '__main__':
     parser.add_argument("--seed", default=-1, type=int)
     parser.add_argument("--delta", default=0.01, type=float)
     parser.add_argument('--L_values', nargs='+', default=[0, 5, 10], type=int)
-    parser.add_argument('--gamma_values', nargs='+', default=[0.2, 1], type=float)
+    parser.add_argument('--gamma_values', nargs='+', default=[1], type=float)
     parser.add_argument('--max_jobs', default=20, type=int)
     parser.add_argument('--noise', dest='noise', choices=['uniform', 'bernoulli'], default='uniform')
     parser.add_argument("--perturbations", action="store_true")

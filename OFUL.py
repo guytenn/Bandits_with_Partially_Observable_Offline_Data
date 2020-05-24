@@ -27,6 +27,8 @@ class OFUL:
 
         ucb_bonus = np.zeros(self.K)
         for a in range(self.K):
+            if np.sum(self.Y[a]) == 0:
+                return a
             Ma_inv = np.linalg.pinv(M[a])
             Pa = I(self.d) - Ma_inv @ M[a]
             Ma_ba = Ma_inv @ b[a]
@@ -40,7 +42,7 @@ class OFUL:
 
     @property
     def beta(self):
-        return np.sqrt((self.d - self.L) * np.log((self.K / self.delta)*(1 + self.t / self.l))) + np.sqrt(self.l) * self.S
+        return 0.25 * np.sqrt((self.d - self.L) * np.log((self.K / self.delta)*(1 + self.t / self.l))) + np.sqrt(self.l) * self.S
 
     def update(self, x, a, r):
         self.xxt[a] += x[:, np.newaxis] @ x[:, np.newaxis].T
