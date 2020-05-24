@@ -1,5 +1,6 @@
 import numpy as np
-from SquareLinCBLC import SquareLinCBLC
+from SquareLinCB import SquareLinCB
+from OFUL import OFUL
 from utils import calc_gamma
 from time import time
 from data import MbSampler, DataManager
@@ -41,19 +42,29 @@ class Trainer:
             M = None
 
         regret = 0
-        gamma = gamma_factor * calc_gamma(T, 1, B, self.K, args['l'], self.d, L, self.S, args['delta'])
-        # gamma = gamma_factor * np.sqrt(T)
-        Algo = SquareLinCBLC(self.d, self.K, gamma, self.mu, args['l'])
+        regret_vec = []
+
+        if args['algo'] == 'oful':
+            Algo = OFUL(self.d, self.K, L, gamma_factor, self.S, args['l'], args['delta'])
+        elif args['algo'] == 'square':
+            gamma = gamma_factor * calc_gamma(T, 1, B, self.K, args['l'], self.d, L, self.S, args['delta'])
+            Algo = SquareLinCB(self.d, self.K, gamma, self.mu, args['l'])
+        else:
+            raise ValueError(f'Unknown algorithm {args["algo"]}')
+
         for _ in range(T):
             x = self.env.sample_x()
             if self.args['perturbations']:
                 M, _ = sampler.step(x)
-            y_hat = Algo.step(x, M, b)
-            p = Algo.calc_p(y_hat)
-            a = np.random.choice(range(self.K), p=p)
+            a = Algo.step(x, M, b)
             real_r, r = self.env.sample_r(x, a)
             Algo.update(x, a, r)
             regret += self.env.best_r(x) - real_r
+            if args['algo'] == 'oful':
+                regret_vec.append(regret)
         elapsed_time = time()-start
         print(f'Done: (T={T}, L={L}, gamma={gamma_factor}, regret={regret}, time={elapsed_time}s, time_per_100_iter={100 * elapsed_time / T}s)')
-        return regret
+        if args['algo'] == 'oful':
+            return regret_vec
+        else:
+            return regret
