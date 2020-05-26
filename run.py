@@ -10,7 +10,7 @@ import os
 import datetime
 from data import DataManager
 
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 
 
 def main(args):
@@ -88,8 +88,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--algo', dest='algo', choices=['oful', 'square'], default='oful')
     parser.add_argument("--n_vals", default=20, type=int)
-    parser.add_argument("--N", default=5, type=int)
-    parser.add_argument("--d", default=15, type=int)
+    parser.add_argument("--N", default=3, type=int)
+    parser.add_argument("--d", default=30, type=int)
     parser.add_argument("--K", default=5, type=int)
     parser.add_argument("--l", default=1, type=float)
     parser.add_argument("--n_seeds", default=1, type=int)
