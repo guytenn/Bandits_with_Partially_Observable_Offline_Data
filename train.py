@@ -40,6 +40,10 @@ class Trainer:
             b = np.array(sampler.b)
             B = self.S * np.max(np.linalg.norm(b, axis=1))
             M = None
+            elapsed_time = time() - start
+            print(f'It took {elapsed_time}s to build dataset')
+            start = time()
+
 
         regret = 0
         regret_vec = []

@@ -9,6 +9,7 @@ from itertools import product
 import os
 import datetime
 from data import DataManager
+import yaml
 
 # matplotlib.use('Agg')
 
@@ -49,7 +50,7 @@ def main(args):
                                                   for seed, L, gamma in product(*iters)))
 
     # Gather results and save
-    folder_name = datetime.datetime.now().__str__()
+    folder_name = datetime.datetime.now().__str__().replace(' ', '_')
     os.mkdir(folder_name)
 
     if args['algo'] == 'oful':
@@ -68,6 +69,8 @@ def main(args):
 
     save_data = {'data': regret, 'args': args}
     np.save(f'{folder_name}/data.npy', save_data)
+    with open(f'{folder_name}/args.yml', 'w') as outfile:
+        yaml.dump(args, outfile, default_flow_style=False)
 
     # Plot
     for gg, gamma in enumerate(args['gamma_values']):
