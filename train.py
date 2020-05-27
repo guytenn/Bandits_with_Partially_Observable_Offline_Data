@@ -65,12 +65,7 @@ class Trainer:
                     print(f'Mid-run: (t/T={t}/{T}, L={L}, gamma={gamma_factor}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * (time()-start) / t}s)')
             x = self.env.sample_x()
             if self.args['perturbations']:
-                M_tmp = M
                 M, _ = sampler.step(x)
-                try:
-                    print(t, np.linalg.norm(M-M_tmp))
-                except:
-                    pass
             a = Algo.step(x, M, b)
             real_r, r = self.env.sample_r(x, a)
             Algo.update(x, a, r)
