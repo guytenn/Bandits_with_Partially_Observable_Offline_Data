@@ -60,13 +60,14 @@ class DataManager:
         self.K = K
         self.d = d
         self.Phi = np.random.randn(K, d)
+        self.bias = np.random.rand(K)
         self.X, self.A, self.r, self.Pa = self._create_dataset(N)
 
     def reset(self):
         self.X, self.A, self.r, self.Pa = self._create_dataset(self.N)
 
     def pib(self, x):
-        p = softmax(self.Phi @ x)
+        p = softmax(self.Phi @ x + self.bias)
         return int(np.random.choice(self.K, p=p))
 
     def _create_dataset(self, N):
@@ -93,20 +94,19 @@ class MbSampler:
         N = data_manager.N
 
         # For calculating b (R11 is also used for M)
-        R11_vec = [R() for _ in range(K)]
+        self.R11_vec = [R() for _ in range(K)]
         self.R12_vec = [R() for _ in range(K)]
         Y = [Mu() for _ in range(self.K)]
         for i in range(N):
-            R11_vec[data_manager.A[i]].step(data_manager.X[i, :L])
+            self.R11_vec[data_manager.A[i]].step(data_manager.X[i, :L])
             Y[data_manager.A[i]].step(data_manager.X[i, :L] * data_manager.r[i])
             if calc_r12:
                 self.R12_vec[data_manager.A[i]].step(data_manager.X[i, :L], data_manager.X[i, L:])
-        self.R11_inv_vec = [np.linalg.inv(R11.value) for R11 in R11_vec]
-        self.b = [self.R11_inv_vec[i] @ Y[i].value for i in range(K)]
+        self.R11_inv_vec = [np.linalg.inv(R11.value) for R11 in self.R11_vec]
+        self.b = [self.R11_inv_vec[a] @ Y[a].value for a in range(K)]
 
         # For calculating M
         self.M = [[] for _ in range(K)]
-
 
     def step(self, x):
         if self.L == 0:

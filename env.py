@@ -1,19 +1,32 @@
 import numpy as np
+from utils import random_cov
 
 
 class LinearContextualBandit:
 
-    def __init__(self, w, noise='uniform'):
+    def __init__(self, w, noise='uniform', x_noise=None, T=None):
         self.K = w.shape[0]
         self.d = w.shape[1]
         self.w = w
         self.noise = noise
+        self.x_noise = x_noise
+        self.T = T
+        if x_noise == 'correlated':
+            self.cov = random_cov(np.random.rand(self.d))
+            self.mean = 0.01 * (np.random.rand(self.d) - 0.5)
 
     def sample_x(self):
         # x = np.abs(np.random.randn(self.d))
-        x = 0.5 * (0.5 + np.random.rand(self.d)) / np.sqrt(self.d)
+        # x = 0.5 * (0.5 + np.random.rand(self.d))
+        if self.x_noise == 'correlated':
+            x = np.random.multivariate_normal(self.mean, self.cov)
+        else:
+            x = np.random.randn(self.d)
+        normalization = np.linalg.norm(x, 2)
+        if self.T:
+            normalization *= np.sqrt(self.T)
         # normalization = (3 * np.random.rand() + 1) * np.linalg.norm(x, 2)
-        return x #/ normalization
+        return x / normalization
 
     def best_r(self, x):
         rmax = -np.inf

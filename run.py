@@ -20,10 +20,19 @@ def main(args):
 
     d = args['d']
     K = args['K']
+    if args['algo'] == 'oful':
+        T_vals = [10 ** args['N']]
+    elif args['algo'] == 'square':
+        T_vals = np.logspace(1, args['N'], args['n_vals']).astype(int)
+    else:
+        raise ValueError(f'Unknown algorithm {args["algo"]}')
 
     w = np.abs(np.random.rand(K, d)) / np.sqrt(d)
 
-    env = LinearContextualBandit(w, args['noise'])
+    if args['worst_case']:
+        env = LinearContextualBandit(w, args['noise'], T=T_vals[-1])
+    else:
+        env = LinearContextualBandit(w, args['noise'])
 
     if args['perturbations']:
         print(f'Creating Dataset of size N={args["data_size"]}')
@@ -32,13 +41,6 @@ def main(args):
         data_manager = None
 
     trainer = Trainer(env=env, w=w, **args)
-
-    if args['algo'] == 'oful':
-        T_vals = [10 ** args['N']]
-    elif args['algo'] == 'square':
-        T_vals = np.logspace(1, args['N'], args['n_vals']).astype(int)
-    else:
-        raise ValueError(f'Unknown algorithm {args["algo"]}')
 
     iters = [range(args['n_seeds']), args['L_values'], args['gamma_values']]
 
@@ -98,10 +100,11 @@ if __name__ == '__main__':
     parser.add_argument("--n_seeds", default=1, type=int)
     parser.add_argument("--seed", default=-1, type=int)
     parser.add_argument("--delta", default=0.01, type=float)
-    parser.add_argument('--L_values', nargs='+', default=[0, 5, 10], type=int)
+    parser.add_argument('--L_values', nargs='+', default=[5], type=int)
     parser.add_argument('--gamma_values', nargs='+', default=[1], type=float)
     parser.add_argument('--max_jobs', default=20, type=int)
     parser.add_argument('--noise', dest='noise', choices=['uniform', 'bernoulli'], default='uniform')
+    parser.add_argument("--worst_case", action="store_true")
     parser.add_argument("--perturbations", action="store_true")
     parser.add_argument('--data_size', default=1000, type=int)
     parser.add_argument('--calc_r12', action="store_true")

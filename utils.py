@@ -1,5 +1,5 @@
 import numpy as np
-
+from scipy.stats import unitary_group
 
 def pinv(M):
     return M.T@np.linalg.pinv(M@M.T)
@@ -30,3 +30,9 @@ def calc_gamma(t, w, B, K, l, d, L, S, delta):
 def softmax(x):
     e_x = np.exp(x - np.max(x))
     return e_x / e_x.sum()
+
+
+def random_cov(eigenvalues):
+    d = len(eigenvalues)
+    U = unitary_group.rvs(d)
+    return U @ np.diag(eigenvalues) @ U.T
