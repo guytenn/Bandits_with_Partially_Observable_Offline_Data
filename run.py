@@ -30,9 +30,9 @@ def main(args):
     w = np.abs(np.random.rand(K, d)) / np.sqrt(d)
 
     if args['worst_case']:
-        env = LinearContextualBandit(w, args['noise'], T=T_vals[-1])
+        env = LinearContextualBandit(w, args['noise'], T=T_vals[-1], x_norm=args['x_normalization'])
     else:
-        env = LinearContextualBandit(w, args['noise'])
+        env = LinearContextualBandit(w, args['noise'], x_norm=args['x_normalization'])
 
     if args['perturbations']:
         print(f'Creating Dataset of size N={args["data_size"]}')
@@ -105,6 +105,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_jobs', default=20, type=int)
     parser.add_argument('--noise', dest='noise', choices=['uniform', 'bernoulli'], default='uniform')
     parser.add_argument("--worst_case", action="store_true")
+    parser.add_argument('--x_normalization', default=1, type=int)
     parser.add_argument("--perturbations", action="store_true")
     parser.add_argument('--data_size', default=1000, type=int)
     parser.add_argument('--calc_r12', action="store_true")
