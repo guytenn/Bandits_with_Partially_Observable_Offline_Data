@@ -62,7 +62,7 @@ class Trainer:
                 elapsed_time = time() - last_time
                 if elapsed_time > 60:
                     last_time = time()
-                    print(f'Mid-run: (t/T={t}/{T}, L={L}, gamma={gamma_factor}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * elapsed_time / T}s)')
+                    print(f'Mid-run: (t/T={t}/{T}, L={L}, gamma={gamma_factor}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * (time()-start) / t}s)')
             x = self.env.sample_x()
             if self.args['perturbations']:
                 M, _ = sampler.step(x)
