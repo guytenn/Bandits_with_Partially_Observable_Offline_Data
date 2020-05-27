@@ -105,6 +105,7 @@ if __name__ == '__main__':
     parser.add_argument("--perturbations", action="store_true")
     parser.add_argument('--data_size', default=1000, type=int)
     parser.add_argument('--calc_r12', action="store_true")
+    parser.add_argument('--verbose', action="store_true")
     args = parser.parse_args().__dict__
 
     main(args)

@@ -56,7 +56,13 @@ class Trainer:
         else:
             raise ValueError(f'Unknown algorithm {args["algo"]}')
 
+        last_time = start
         for _ in range(T):
+            if self.args['verbose']:
+                elapsed_time = time() - last_time
+                last_time = time()
+                if elapsed_time > 60:
+                    print(f'Mid-run: (T={T}, L={L}, gamma={gamma_factor}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * elapsed_time / T}s)')
             x = self.env.sample_x()
             if self.args['perturbations']:
                 M, _ = sampler.step(x)
