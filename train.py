@@ -60,8 +60,8 @@ class Trainer:
         for _ in range(T):
             if self.args['verbose']:
                 elapsed_time = time() - last_time
-                last_time = time()
                 if elapsed_time > 60:
+                    last_time = time()
                     print(f'Mid-run: (T={T}, L={L}, gamma={gamma_factor}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * elapsed_time / T}s)')
             x = self.env.sample_x()
             if self.args['perturbations']:
