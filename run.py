@@ -84,7 +84,7 @@ if __name__ == '__main__':
     parser.add_argument("--l", default=0.1, type=float)
     parser.add_argument("--delta", default=0.01, type=float)
     parser.add_argument('--L_values', nargs='+', default=[0, 5, 10, 15, 20, 25], type=int)
-    parser.add_argument('--alpha_values', nargs='+', default=[0.01, 0.05, 0.1, 0.15, 0.2], type=float)
+    parser.add_argument('--alpha_values', nargs='+', default=[0.01], type=float)
     parser.add_argument('--max_jobs', default=40, type=int)
     parser.add_argument("--sigma", default=1, type=float)
     parser.add_argument("--worst_case", action="store_true")
