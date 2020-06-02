@@ -108,6 +108,14 @@ class MbSampler:
         # For calculating M
         self.M = [[] for _ in range(K)]
 
+    @property
+    def C(self):
+        if self.L == 0:
+            return 0
+        R11_max = np.max([np.linalg.eigvalsh(R11_inv) for R11_inv in self.R11_inv_vec])
+        Pa_max = np.max(self.data_manager.Pa)
+        return R11_max * Pa_max
+
     def step(self, x):
         if self.L == 0:
             return np.array([]), self.b

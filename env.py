@@ -4,14 +4,14 @@ from utils import random_cov
 
 class LinearContextualBandit:
 
-    def __init__(self, w, noise='uniform', x_noise=None, T=None, x_norm=1):
+    def __init__(self, w, sigma=1, x_noise=None, T=None, x_norm=1):
         self.K = w.shape[0]
         self.d = w.shape[1]
         self.w = w
-        self.noise = noise
         self.x_noise = x_noise
         self.T = T
         self.x_norm = x_norm
+        self.sigma = sigma
         if x_noise == 'correlated':
             self.cov = random_cov(np.random.rand(self.d))
             self.mean = 0.01 * (np.random.rand(self.d) - 0.5)
@@ -40,15 +40,7 @@ class LinearContextualBandit:
 
     def sample_r(self, x, a):
         real_r = x @ self.w[a]
-        const = np.min([np.abs(1 - real_r), real_r])
-        if self.noise == 'uniform':
-            noisy_r = real_r + 2 * const * (np.random.rand() - 0.5)
-        elif self.noise == 'bernoulli':
-            if (np.random.rand() > 0.5):
-                noisy_r = real_r + const
-            else:
-                noisy_r = real_r - const
-        else:
-            raise ValueError(f'Unknown noise type: {self.noise}')
+        noise = self.sigma * np.random.randn()
+        noisy_r = real_r + noise
 
         return real_r, noisy_r

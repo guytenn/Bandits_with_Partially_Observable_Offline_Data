@@ -18,12 +18,15 @@ class Trainer:
         else:
             self.M = None
         self.w = w
-        self.S = np.max(np.linalg.norm(w, axis=1))
+        self.Sw = np.max(np.linalg.norm(w, axis=1))
+        self.Sx = env.x_norm
+        self.sigma = env.sigma
         self.mu = self.K
+        self.gamma_factor = self.args['gamma_factor']
 
-    def execute(self, T, L, gamma_factor, data_manager: DataManager = None):
+    def execute(self, T, L, alpha_l_factor, data_manager: DataManager = None):
         start = time()
-        print(f'Started Job: (T={T}, L={L}, gamma={gamma_factor})')
+        print(f'Started Job: (T={T}, L={L}, alpha_l={alpha_l_factor})')
 
         args = self.args
 
@@ -33,12 +36,10 @@ class Trainer:
             B = 0
             for a in range(self.K):
                 b[a] = M[a] @ self.w[a]
-                B = np.max([B, self.S * np.linalg.norm(b[a])])
             sampler = None
         else:
             sampler = MbSampler(data_manager, L, self.d, self.K, args['calc_r12'])
             b = np.array(sampler.b)
-            B = self.S * np.max(np.linalg.norm(b, axis=1))
             M = None
             elapsed_time = time() - start
             print(f'It took {elapsed_time}s to build dataset')
@@ -48,13 +49,11 @@ class Trainer:
         regret = 0
         regret_vec = []
 
-        if args['algo'] == 'oful':
-            Algo = OFUL(self.d, self.K, L, gamma_factor, self.S, args['l'], args['delta'])
-        elif args['algo'] == 'square':
-            gamma = gamma_factor * calc_gamma(T, 1, B, self.K, args['l'], self.d, L, self.S, args['delta'])
-            Algo = SquareLinCB(self.d, self.K, gamma, self.mu, args['l'])
+        if args['perturbations']:
+            C = self.Sw * self.Sx * sampler.C
         else:
-            raise ValueError(f'Unknown algorithm {args["algo"]}')
+            C = 0
+        Algo = OFUL(self.d, self.K, L, self.sigma, self.gamma_factor, alpha_l_factor, self.Sw, self.Sx, C, args['delta'])
 
         last_time = start
         for t in range(T):
@@ -62,7 +61,7 @@ class Trainer:
                 elapsed_time = time() - last_time
                 if elapsed_time > 60:
                     last_time = time()
-                    print(f'Mid-run: (t/T={t}/{T}, L={L}, gamma={gamma_factor}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * (time()-start) / t}s)')
+                    print(f'Mid-run: (t/T={t}/{T}, L={L}, alpha_l={alpha_l_factor}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * (time()-start) / t}s)')
             x = self.env.sample_x()
             if self.args['perturbations']:
                 M, _ = sampler.step(x)
@@ -70,11 +69,8 @@ class Trainer:
             real_r, r = self.env.sample_r(x, a)
             Algo.update(x, a, r)
             regret += self.env.best_r(x) - real_r
-            if args['algo'] == 'oful':
-                regret_vec.append(regret)
+            regret_vec.append(regret)
         elapsed_time = time()-start
-        print(f'Done: (T={T}, L={L}, gamma={gamma_factor}, regret={regret}, time={elapsed_time}s, time_per_100_iter={100 * elapsed_time / T}s)')
-        if args['algo'] == 'oful':
-            return regret_vec
-        else:
-            return regret
+        print(f'Done: (T={T}, L={L}, alpha_l={alpha_l_factor}, regret={regret}, time={elapsed_time}s, time_per_100_iter={100 * elapsed_time / T}s)')
+
+        return regret_vec
