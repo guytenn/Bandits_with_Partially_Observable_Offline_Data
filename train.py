@@ -32,7 +32,7 @@ class Trainer:
         if not args['perturbations']:
             M = self.M[:, 0:L, :]
             b = np.zeros((self.K, L))
-            B = 0
+            N = 0
             for a in range(self.K):
                 b[a] = M[a] @ self.w[a]
             sampler = None
@@ -40,6 +40,7 @@ class Trainer:
             sampler = MbSampler(data_manager, L, self.d, self.K, args['calc_r12'])
             b = np.array(sampler.b)
             M = None
+            N = data_manager.N
             elapsed_time = time() - start
             print(f'It took {elapsed_time}s to build dataset')
             start = time()
@@ -60,7 +61,7 @@ class Trainer:
                 elapsed_time = time() - last_time
                 if elapsed_time > 60:
                     last_time = time()
-                    print(f'Mid-run: (t/T={t}/{T}, L={L}, alpha_l={alpha_l_factor}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * (time()-start) / t}s)')
+                    print(f'Mid-run: (t/T={t}/{T}, L={L}, alpha={alpha_l_factor}, N={N}, regret={regret}, time={time() - start}s, time_per_100_iter={100 * (time()-start) / t}s)')
             x = self.env.sample_x()
             if self.args['perturbations']:
                 M, _ = sampler.step(x)
@@ -70,6 +71,6 @@ class Trainer:
             regret += self.env.best_r(x) - real_r
             regret_vec.append(regret)
         elapsed_time = time()-start
-        print(f'Done: (T={T}, L={L}, alpha_l={alpha_l_factor}, regret={regret}, time={elapsed_time}s, time_per_100_iter={100 * elapsed_time / T}s)')
+        print(f'Done: (T={T}, L={L}, alpha_l={alpha_l_factor}, regret={regret}, N={N}, time={elapsed_time}s, time_per_100_iter={100 * elapsed_time / T}s)')
 
         return regret_vec
