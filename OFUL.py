@@ -3,17 +3,14 @@ from utils import I
 
 
 class OFUL:
-    def __init__(self, d, K, L, sigma, alpha, alpha_l, Sw, Sx, C, delta=0.01):
+    def __init__(self, d, K, L, sigma, alpha, l, Sw, Sx, C, delta=0.01):
         self.alpha = alpha
+        self.l = l
         self.C = C
         self.sigma = sigma
         self.sigma_pert = None
         self.Sx = Sx
         self.Sw = Sw
-        if C == 0:
-            self.l = alpha_l
-        else:
-            self.l = alpha_l * (Sx ** 2) * C / (np.sqrt(d - L))
         self.K = K
         self.L = L
         self.d = d
@@ -49,7 +46,7 @@ class OFUL:
 
     @property
     def beta(self):
-        return (self.sigma + 2 * (1 / np.sqrt(self.l)) * (self.Sx ** 2) * self.C) * \
+        return (self.sigma + self.Sx * self.Sw * self.C) * \
                np.sqrt((self.d - self.L) * np.log((self.K / self.delta)*(1 + self.t / self.l))) + np.sqrt(self.l) * self.Sw
 
     def update(self, x, a, r):

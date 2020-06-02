@@ -22,7 +22,6 @@ class Trainer:
         self.Sx = env.x_norm
         self.sigma = env.sigma
         self.mu = self.K
-        self.gamma_factor = self.args['gamma_factor']
 
     def execute(self, T, L, alpha_l_factor, data_manager: DataManager = None):
         start = time()
@@ -53,7 +52,7 @@ class Trainer:
             C = self.Sw * self.Sx * sampler.C
         else:
             C = 0
-        Algo = OFUL(self.d, self.K, L, self.sigma, self.gamma_factor, alpha_l_factor, self.Sw, self.Sx, C, args['delta'])
+        Algo = OFUL(self.d, self.K, L, self.sigma, alpha_l_factor, args['l'], self.Sw, self.Sx, C, args['delta'])
 
         last_time = start
         for t in range(T):
