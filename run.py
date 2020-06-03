@@ -57,6 +57,7 @@ def main(args):
             regret[seed, :, ll, gg] = regret_tmp[0][i]
             i += 1
 
+        args['data_size'] = data_size
         save_data = {'data': regret, 'args': args}
         np.save(f'{folder_name}/data.npy', save_data)
         with open(f'{folder_name}/args.yml', 'w') as outfile:
