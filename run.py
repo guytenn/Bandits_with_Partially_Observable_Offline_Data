@@ -89,7 +89,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_jobs', default=40, type=int)
     parser.add_argument("--sigma", default=1, type=float)
     parser.add_argument("--worst_case", action="store_true")
-    parser.add_argument('--x_normalization', default=1, type=int)
+    parser.add_argument('--x_normalization', default=1, type=float)
     parser.add_argument("--perturbations", action="store_true")
     parser.add_argument('--data_sizes', nargs='+', default=[1000], type=int)
     parser.add_argument('--calc_r12', action="store_true")
