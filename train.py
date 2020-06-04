@@ -49,7 +49,7 @@ class Trainer:
         regret = 0
         regret_vec = []
 
-        if args['perturbations']:
+        if args['perturbations'] and not args['calc_r12']:
             C = self.Sw * self.Sx * sampler.C
         else:
             C = 0

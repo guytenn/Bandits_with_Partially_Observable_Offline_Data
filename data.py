@@ -110,7 +110,7 @@ class MbSampler:
 
     @property
     def C(self):
-        if self.L == 0:
+        if self.L == 0 or self.calc_r12:
             return 0
         R11_max = np.max([np.linalg.eigvalsh(R11_inv) for R11_inv in self.R11_inv_vec])
         # Pa_min = np.min(self.data_manager.Pa)
