@@ -25,10 +25,7 @@ def main(args):
 
         w = np.abs(np.random.rand(K, d)) / np.sqrt(d)
 
-        if args['worst_case']:
-            env = LinearContextualBandit(w, sigma=args['sigma'], T=T_vals[-1], x_norm=args['x_normalization'])
-        else:
-            env = LinearContextualBandit(w, sigma=args['sigma'], x_norm=args['x_normalization'])
+        env = LinearContextualBandit(w, sigma=args['sigma'], x_norm=args['x_normalization'])
 
         if args['perturbations']:
             print(f'Creating Dataset of size N={data_size}')
@@ -77,10 +74,10 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--N", default=3, type=int)
+    parser.add_argument("--N", default=5, type=int)
     parser.add_argument("--d", default=30, type=int)
     parser.add_argument("--K", default=30, type=int)
-    parser.add_argument("--n_seeds", default=1, type=int)
+    parser.add_argument("--n_seeds", default=5, type=int)
     parser.add_argument("--seed", default=-1, type=int)
     parser.add_argument("--l", default=0.1, type=float)
     parser.add_argument("--delta", default=0.01, type=float)
@@ -88,10 +85,9 @@ if __name__ == '__main__':
     parser.add_argument('--alpha_values', nargs='+', default=[0.01], type=float)
     parser.add_argument('--max_jobs', default=40, type=int)
     parser.add_argument("--sigma", default=1, type=float)
-    parser.add_argument("--worst_case", action="store_true")
     parser.add_argument('--x_normalization', default=1, type=float)
     parser.add_argument("--perturbations", action="store_true")
-    parser.add_argument('--data_sizes', nargs='+', default=[1000], type=int)
+    parser.add_argument('--data_sizes', nargs='+', default=[10000, 100000, 1000000], type=int)
     parser.add_argument('--calc_r12', action="store_true")
     parser.add_argument('--verbose', action="store_true")
     args = parser.parse_args().__dict__

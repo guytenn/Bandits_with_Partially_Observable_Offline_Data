@@ -4,12 +4,11 @@ from utils import random_cov
 
 class LinearContextualBandit:
 
-    def __init__(self, w, sigma=1, x_noise=None, T=None, x_norm=1):
+    def __init__(self, w, sigma=1, x_noise=None, x_norm=1):
         self.K = w.shape[0]
         self.d = w.shape[1]
         self.w = w
         self.x_noise = x_noise
-        self.T = T
         self.x_norm = x_norm
         self.sigma = sigma
         if x_noise == 'correlated':
@@ -25,9 +24,6 @@ class LinearContextualBandit:
             x = np.random.randn(self.d)
         normalization = np.linalg.norm(x, 2)
         normalization *= self.x_norm
-        if self.T:
-            normalization *= np.sqrt(self.T)
-        # normalization = (3 * np.random.rand() + 1) * np.linalg.norm(x, 2)
         return x / normalization
 
     def best_r(self, x):
