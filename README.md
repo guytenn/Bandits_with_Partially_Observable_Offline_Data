@@ -22,7 +22,7 @@ Code requires python3 (>=3.5). You'll also need system packages joblib, yaml and
 * N (default value 5): will run OFUL for `10^N` iterations
 * d (default value 30): dimension of context and weights
 * K (default value 30): number of arms
-* n_seeds (default value 5): number of seeds
+* n_seeds (default value 5): number of seeds to run for experiment
 * seed (default -1): choose specific seed to run (will randomize if not set)
 * l (default value 0.1): '\lambda', regularization parameter
 * delta (default value 0.01): high probability parameter

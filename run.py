@@ -13,18 +13,18 @@ import yaml
 # matplotlib.use('Agg')
 
 def main(args):
+    if args['seed'] >= 0:
+        np.random.seed(args['seed'])
+
+    d = args['d']
+    K = args['K']
+    T_vals = [10 ** args['N']]
+
+    w = np.abs(np.random.rand(K, d)) / np.sqrt(d)
+
+    env = LinearContextualBandit(w, sigma=args['sigma'], x_norm=args['x_normalization'])
+
     for data_size in args["data_sizes"]:
-        if args['seed'] >= 0:
-            np.random.seed(args['seed'])
-
-        d = args['d']
-        K = args['K']
-        T_vals = [10 ** args['N']]
-
-        w = np.abs(np.random.rand(K, d)) / np.sqrt(d)
-
-        env = LinearContextualBandit(w, sigma=args['sigma'], x_norm=args['x_normalization'])
-
         if args['perturbations']:
             print(f'Creating Dataset of size N={data_size}')
             data_manager = DataManager(env, d, K, data_size)
