@@ -36,7 +36,15 @@ Code requires python3 (>=3.5). You'll also need system packages joblib, yaml and
 * calc_r12: when set, will precalculate `R_{12}` to use, such that `M_a` are known in advance
 * verbose: print more information during run
   
-**Example of how to run:**
+**How to run:**
+
+* To run with default parameters try
+
+```
+python3.8 run.py --perturbations --verbose
+```
+
+* To run with your own paramters, here's an example:
 
 ```
 python3.8 run.py --N 5 --d 30 --K 30 --delta 0.01 --L_values 0 5 10 15 20 25 --alpha_l_values 0.001 0.01 --max_jobs 40 --sigma 1 --x_normalization 1 --perturbations --data_sizes 1000000 --verbose
