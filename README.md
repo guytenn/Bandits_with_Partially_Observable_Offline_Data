@@ -23,7 +23,7 @@ Code requires python3 (>=3.5). You'll also need system packages joblib, yaml and
 * d (default value 30): dimension of context and weights
 * K (default value 30): number of arms
 * n_seeds (default value 5): number of seeds to run for experiment
-* seed (default -1): choose specific seed to run (will randomize if not set)
+* seed (default -1): choose specific seed to run (will randomize if not set, i.e., set to -1)
 * l (default value 0.1): '\lambda', regularization parameter
 * delta (default value 0.01): high probability parameter
 * L_values (default value 0 5 10 15 20 25): a list containing the values of L to run
