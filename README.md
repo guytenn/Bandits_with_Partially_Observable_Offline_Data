@@ -15,7 +15,7 @@ This code is submitted as supplementary material for paper:
 
 **run.py commands:**
 
-* N (default value 5): will run OFUL for `$10^N$` iterations
+* N (default value 5): will run OFUL for `10^N` iterations
 * d (default value 30): dimension of context and weights
 * K (default value 30): number of arms
 * n_seeds (default value 5): number of seeds
@@ -26,10 +26,10 @@ This code is submitted as supplementary material for paper:
 * alpha_values (default value 0.001 0.01): a list containing the values of '\alpha' to run (optimism paramter)
 * max_jobs (default value 40): number of processes to run in parallel
 * sigma (default value 1): subgaussian parameter of noise
-* x_normalization (default 1): norm of 'x' with be divided by this number, such that `$||x|| = 1 / x_normalization$`
+* x_normalization (default 1): norm of 'x' with be divided by this number, such that `||x|| = 1 / x_normalization`
 * perturbations: when set, will run oful with offline dataset
 * data_sizes (default values 10000 100000 1000000): a list containing sizes of datasets (different run for every dataset)
-* calc_r12: when set, will precalculate `$R_{12}$` to use, such that `$M_a$` are known in advance
+* calc_r12: when set, will precalculate `R_{12}` to use, such that `M_a` are known in advance
 * verbose: print more information during run
   
 **Example of how to run:**
