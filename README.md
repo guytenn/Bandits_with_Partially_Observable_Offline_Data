@@ -5,6 +5,10 @@ This code is submitted as supplementary material for paper:
 
 > _**Partially observable offline data can (still) be used to improve online learning**_
 
+**Prerequisites**
+
+Code requires python3 (>=3.5). You'll also need system packages joblib, yaml and standard packages such as numpy, matplotlib.
+
 **A brief description of files:**
 
 * run.py: Contains main run file for executing code with options (see explanation of options further on)

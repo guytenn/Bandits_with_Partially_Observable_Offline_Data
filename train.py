@@ -1,7 +1,5 @@
 import numpy as np
-from SquareLinCB import SquareLinCB
 from OFUL import OFUL
-from utils import calc_gamma
 from time import time
 from data import MbSampler, DataManager
 

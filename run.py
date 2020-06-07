@@ -1,6 +1,5 @@
 from env import LinearContextualBandit
 import numpy as np
-import matplotlib
 import matplotlib.pyplot as plt
 import argparse
 from train import Trainer
@@ -12,7 +11,6 @@ from data import DataManager
 import yaml
 
 # matplotlib.use('Agg')
-
 
 def main(args):
     for data_size in args["data_sizes"]:

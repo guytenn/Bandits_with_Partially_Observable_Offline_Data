@@ -4,24 +4,15 @@ from utils import random_cov
 
 class LinearContextualBandit:
 
-    def __init__(self, w, sigma=1, x_noise=None, x_norm=1):
+    def __init__(self, w, sigma=1, x_norm=1):
         self.K = w.shape[0]
         self.d = w.shape[1]
         self.w = w
-        self.x_noise = x_noise
         self.x_norm = x_norm
         self.sigma = sigma
-        if x_noise == 'correlated':
-            self.cov = random_cov(np.random.rand(self.d))
-            self.mean = 0.01 * (np.random.rand(self.d) - 0.5)
 
     def sample_x(self):
-        # x = np.abs(np.random.randn(self.d))
-        # x = 0.5 * (0.5 + np.random.rand(self.d))
-        if self.x_noise == 'correlated':
-            x = np.random.multivariate_normal(self.mean, self.cov)
-        else:
-            x = np.random.randn(self.d)
+        x = np.random.randn(self.d)
         normalization = np.linalg.norm(x, 2)
         normalization *= self.x_norm
         return x / normalization
